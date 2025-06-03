@@ -1,7 +1,3 @@
-Here's a complete and **scientific trust score formula** based on all your requirements:
-
----
-
 ## ✅ **Final Trust Score Formula with Decaying Penalties and Ban Threshold**
 
 $$
@@ -59,9 +55,3 @@ $$
 $$
 
 ---
-
-Let me know if you'd like:
-
-* A visual plot of how a penalty decays over time
-* An example calculation
-* A table-based breakdown of penalties and trust score over time
