@@ -1,67 +1,82 @@
-\documentclass{article}
-\usepackage{amsmath, amssymb}
-\usepackage{geometry}
-\usepackage{graphicx}
-\usepackage{hyperref}
 
-\geometry{margin=1in}
-\title{Final Trust Score Formula}
-\date{}
-\begin{document}
 
-\maketitle
+## ✅ Final Trust Score Formula with Decaying Penalties and Ban Threshold
 
-\section*{✅ Final Trust Score Formula with Decaying Penalties and Ban Threshold}
-
-\[
+```math
 \text{TrustScore}(t) = 
 \begin{cases}
 0, & \text{if } P(t) \geq P_{\text{ban}} \\
 S_0 + \alpha \cdot N_{\text{genuine}} - \beta \cdot P(t), & \text{if } P(t) < P_{\text{ban}}
 \end{cases}
-\]
+```
 
-\subsection*{🔍 Where:}
+---
 
-\begin{itemize}
-    \item $\text{TrustScore}(t)$: Trust score of the user at time $t$
-    \item $S_0$: Base trust score (e.g., 50)
-    \item $\alpha$: Bonus weight per genuine review
-    \item $N_{\text{genuine}}$: Total number of genuine reviews
-    \item $\beta$: Penalty weight factor for fake reviews
-    \item $P(t)$: Active penalty score at time $t$ (defined below)
-    \item $P_{\text{ban}}$: Ban threshold (e.g., 5)
-\end{itemize}
+### 🔍 Where:
 
-\section*{🔻 Penalty Score $P(t)$ Definition}
+* **`TrustScore(t)`**: Trust score of the user at time `t`
+* **`S₀`**: Base trust score (e.g., 50)
+* **`α`**: Bonus weight per genuine review
+* **`N₍genuine₎`**: Total number of genuine reviews
+* **`β`**: Penalty weight for fake reviews
+* **`P(t)`**: Active penalty score at time `t`
+* **`P₍ban₎`**: Ban threshold (e.g., 5)
 
-\[
+---
+
+## 🔻 Penalty Score Formula
+
+```math
 P(t) = \sum_{i=1}^{N_{\text{fake}}} \mathbb{1}_{[0 \leq t - t_i < T_{\text{decay}}]} \cdot e^{-\lambda (t - t_i)}
-\]
+```
 
-\subsection*{🔍 Penalty Term Breakdown:}
+---
 
-\begin{itemize}
-    \item $N_{\text{fake}}$: Number of fake reviews
-    \item $t_i$: Timestamp (e.g., in days) of the $i^{\text{th}}$ fake review
-    \item $\mathbb{1}_{[0 \leq t - t_i < T_{\text{decay}}]}$: Indicator function — active only for reviews in the past $T_{\text{decay}}$
-    \item $T_{\text{decay}}$: Penalty lifetime (e.g., 90 days)
-    \item $\lambda$: Decay rate constant, e.g., $\lambda = \frac{\ln 2}{45}$ \quad (i.e., half-life = 45 days)
-\end{itemize}
+### 🔍 Penalty Term Breakdown:
 
-\section*{🧠 Intuition}
+* **`N₍fake₎`**: Number of fake reviews
+* **`tᵢ`**: Timestamp of the *i-th* fake review (in days)
+* **`𝟙[0 ≤ t - tᵢ < T₍decay₎]`**: Indicator function — 1 if within penalty lifetime, else 0
+* **`T₍decay₎`**: Penalty lifetime (e.g., 90 days)
+* **`λ`**: Decay rate constant
 
-\begin{itemize}
-    \item Trust score increases with the number of genuine reviews
-    \item Fake review penalties decay over time
-    \item Penalty fully disappears after $T_{\text{decay}}$ (e.g., 3 months)
-    \item If penalty score reaches $P_{\text{ban}}$ or more, trust score is \textbf{zeroed (user is banned)}
-\end{itemize}
+  * Suggested: `λ = ln(2)/45` → Half-life of 45 days
 
-\section*{📘 Optional Normalized Trust Score}
+---
 
-\[
+## 🧠 Intuition
+
+* Trust score **increases** with genuine reviews
+* Fake reviews **penalize**, but penalty **decays over time**
+* Penalties **disappear** after `T₍decay₎`
+* If `P(t) ≥ P₍ban₎`, user is **banned** (Trust Score = 0)
+
+---
+
+## 📘 Normalized Trust Score (Optional)
+
+```math
 \text{TrustScore}_{\text{norm}}(t) = \max\left(0, \min\left(100, \text{TrustScore}(t)\right)\right)
-\]
+```
 
-\end{document}
+---
+
+## 🧪 Example Parameters
+
+| Symbol     | Value    | Meaning                   |
+| ---------- | -------- | ------------------------- |
+| `S₀`       | 50       | Initial trust             |
+| `α`        | 2        | Points per genuine review |
+| `β`        | 1        | Penalty per fake score    |
+| `λ`        | ln(2)/45 | Half-life decay constant  |
+| `T₍decay₎` | 90 days  | Penalty window            |
+| `P₍ban₎`   | 5        | Ban if penalty ≥ 5        |
+
+---
+
+### 📝 Notes:
+
+* All times (`t`, `tᵢ`) should be in the **same unit** (e.g., days).
+* You can compute this in Python, R, or any backend for reputation tracking.
+* Useful for trust systems in **review platforms**, **marketplaces**, or **content moderation**.
+
